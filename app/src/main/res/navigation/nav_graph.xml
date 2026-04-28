@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/nav_dashboard">
+
+    <fragment
+        android:id="@+id/nav_dashboard"
+        android:name="com.magalona.sarisaristore.fragments.DashboardFragment"
+        android:label="Dashboard"/>
+
+    <fragment
+        android:id="@+id/nav_stock"
+        android:name="com.magalona.sarisaristore.fragments.StockFragment"
+        android:label="Inventory"/>
+
+    <fragment
+        android:id="@+id/nav_pos"
+        android:name="com.magalona.sarisaristore.fragments.PosFragment"
+        android:label="Point of Sale"/>
+
+    <fragment
+        android:id="@+id/nav_history"
+        android:name="com.magalona.sarisaristore.fragments.SalesHistoryFragment"
+        android:label="Sales History"/>
+
+    <fragment
+        android:id="@+id/nav_low_stock"
+        android:name="com.magalona.sarisaristore.fragments.LowStockFragment"
+        android:label="Low Stock Alerts"/>
+
+</navigation>

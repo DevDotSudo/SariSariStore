@@ -1,9 +1,43 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
-    <style name="Base.Theme.SariSariStore" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.SariSariStore" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Main Brand Colors -->
+        <item name="colorPrimary">@color/primary</item>
+        <item name="colorOnPrimary">@color/text_on_primary</item>
+        <item name="colorPrimaryContainer">@color/primary_light</item>
+        <item name="colorOnPrimaryContainer">@color/text_primary</item>
+
+        <item name="colorSecondary">@color/dark_ui_bg</item>
+        <item name="colorOnSecondary">@color/text_on_dark</item>
+
+        <item name="colorError">@color/error</item>
+        <item name="colorOnError">@color/surface</item>
+
+        <item name="android:windowBackground">@color/background</item>
+        <item name="android:statusBarColor">@color/primary</item>
+        <item name="android:windowLightStatusBar">false</item>
+
+        <!-- Custom styles for specific components -->
+        <item name="navigationViewStyle">@style/Widget.SariSari.NavigationView</item>
     </style>
 
-    <style name="Theme.SariSariStore" parent="Base.Theme.SariSariStore" />
+    <style name="Widget.SariSari.NavigationView" parent="Widget.Material3.NavigationView">
+        <item name="android:background">@color/dark_ui_bg</item>
+        <item name="itemTextColor">@color/text_on_dark</item>
+        <item name="itemIconTint">@color/primary_light</item>
+        <item name="headerLayout">@layout/nav_header_main</item>
+    </style>
+
+    <style name="Theme.SariSariStore.Dialog" parent="Theme.Material3.DayNight.Dialog">
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowIsFloating">true</item>
+    </style>
+
+    <style name="ShapeAppearance.SariSari.TopRounded" parent="ShapeAppearance.Material3.MediumComponent">
+        <item name="cornerSizeTopLeft">32dp</item>
+        <item name="cornerSizeTopRight">32dp</item>
+        <item name="cornerSizeBottomLeft">0dp</item>
+        <item name="cornerSizeBottomRight">0dp</item>
+    </style>
 </resources>

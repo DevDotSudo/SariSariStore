@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="@dimen/spacing_lg"
+    app:cardCornerRadius="@dimen/dialog_corner_radius"
+    app:cardElevation="8dp"
+    app:cardBackgroundColor="@color/surface"
+    app:strokeWidth="0dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- Header Section -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/primary"
+            android:orientation="vertical"
+            android:padding="@dimen/spacing_lg">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Select Quantity"
+                android:textColor="@color/surface"
+                android:textSize="@dimen/text_size_title"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <!-- Content Section -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingHorizontal="@dimen/spacing_lg"
+            android:paddingTop="@dimen/spacing_lg"
+            android:paddingBottom="@dimen/spacing_md">
+
+            <!-- Product Name -->
+            <TextView
+                android:id="@+id/tv_product_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Product Name"
+                android:textColor="@color/text_primary"
+                android:textSize="@dimen/text_size_subtitle"
+                android:textStyle="bold"
+                android:layout_marginBottom="@dimen/spacing_xs" />
+
+            <!-- Stock Info -->
+            <TextView
+                android:id="@+id/tv_stock"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Available: 0"
+                android:textColor="@color/text_secondary"
+                android:textSize="@dimen/text_size_body_small"
+                android:layout_marginBottom="@dimen/spacing_lg" />
+
+            <!-- Quantity Input -->
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/spacing_lg"
+                android:hint="Quantity to add to cart"
+                app:boxCornerRadiusBottomEnd="@dimen/corner_md"
+                app:boxCornerRadiusBottomStart="@dimen/corner_md"
+                app:boxCornerRadiusTopEnd="@dimen/corner_md"
+                app:boxCornerRadiusTopStart="@dimen/corner_md"
+                app:boxStrokeColor="@color/primary"
+                app:hintTextColor="@color/primary">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/et_quantity"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="number"
+                    android:text="1"
+                    android:textColor="@color/text_primary"
+                    android:textSize="@dimen/text_size_body_large" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Add to Cart Button -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_confirm"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/button_height_medium"
+                android:text="Add to Cart"
+                android:textColor="@color/surface"
+                android:textSize="@dimen/text_size_body_large"
+                android:textStyle="bold"
+                app:cornerRadius="@dimen/corner_md"
+                app:backgroundTint="@color/primary" />
+        </LinearLayout>
+
+        <!-- Footer Section -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="end"
+            android:paddingHorizontal="@dimen/spacing_md"
+            android:paddingVertical="@dimen/spacing_sm">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_cancel"
+                style="@style/Widget.Material3.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Cancel"
+                android:textColor="@color/primary_light"
+                android:textSize="@dimen/text_size_body_large" />
+        </LinearLayout>
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>

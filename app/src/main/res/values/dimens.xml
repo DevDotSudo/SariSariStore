@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Typography -->
+    <dimen name="text_size_heading">24sp</dimen>
+    <dimen name="text_size_title">20sp</dimen>
+    <dimen name="text_size_subtitle">16sp</dimen>
+    <dimen name="text_size_body_large">14sp</dimen>
+    <dimen name="text_size_body_small">12sp</dimen>
+    <dimen name="text_size_caption">11sp</dimen>
+
+    <!-- Spacing Grid (8dp base unit) -->
+    <dimen name="spacing_xs">4dp</dimen>
+    <dimen name="spacing_sm">8dp</dimen>
+    <dimen name="spacing_md">16dp</dimen>
+    <dimen name="spacing_lg">24dp</dimen>
+    <dimen name="spacing_xl">32dp</dimen>
+
+    <!-- Corner Radii -->
+    <dimen name="corner_xs">8dp</dimen>
+    <dimen name="corner_sm">12dp</dimen>
+    <dimen name="corner_md">16dp</dimen>
+    <dimen name="corner_lg">20dp</dimen>
+    <dimen name="corner_xl">28dp</dimen>
+
+    <!-- Common Dimensions -->
+    <dimen name="dialog_max_width">320dp</dimen>
+    <dimen name="dialog_corner_radius">28dp</dimen>
+    <dimen name="button_height_large">56dp</dimen>
+    <dimen name="button_height_medium">48dp</dimen>
+    <dimen name="button_height_small">44dp</dimen>
+    <dimen name="fab_size">44dp</dimen>
+    <dimen name="fab_corner_radius">22dp</dimen>
+    <dimen name="image_placeholder_size">100dp</dimen>
+</resources>
+

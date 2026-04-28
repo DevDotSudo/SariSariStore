@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#000000">
+
+    <!-- Camera Preview -->
+    <androidx.camera.view.PreviewView
+        android:id="@+id/preview_view"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <!-- Dim overlay top -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:background="#99000000"
+        app:layout_constraintBottom_toTopOf="@id/viewfinder_overlay"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <!-- Viewfinder Frame -->
+    <View
+        android:id="@+id/viewfinder_overlay"
+        android:layout_width="240dp"
+        android:layout_height="160dp"
+        android:background="@drawable/bg_scanner_viewfinder"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <!-- Scan beam line -->
+    <View
+        android:id="@+id/scan_beam"
+        android:layout_width="220dp"
+        android:layout_height="2dp"
+        android:background="@color/primary"
+        android:alpha="0.7"
+        app:layout_constraintEnd_toEndOf="@id/viewfinder_overlay"
+        app:layout_constraintStart_toStartOf="@id/viewfinder_overlay"
+        app:layout_constraintTop_toTopOf="@id/viewfinder_overlay"/>
+
+    <!-- Instruction text -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"
+        android:background="#66000000"
+        android:padding="8dp"
+        android:text="Align barcode within the frame"
+        android:textColor="@color/surface"
+        android:textSize="13sp"
+        app:layout_constraintBottom_toTopOf="@id/viewfinder_overlay"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"/>
+
+    <!-- Cancel Button -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_cancel"
+        style="@style/Widget.Material3.Button.OutlinedButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="48dp"
+        android:text="Cancel"
+        android:textColor="@color/surface"
+        app:cornerRadius="20dp"
+        app:strokeColor="#66FF748B"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
