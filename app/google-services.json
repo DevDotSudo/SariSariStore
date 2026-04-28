@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "653226755206",
+    "project_id": "magalona-sarisaristore",
+    "storage_bucket": "magalona-sarisaristore.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:653226755206:android:541042748f805117e8fd07",
+        "android_client_info": {
+          "package_name": "com.magalona.sarisaristore"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBL5qXVJdBAwQpxKKqzOUf5gSEhMm0T5ow"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
