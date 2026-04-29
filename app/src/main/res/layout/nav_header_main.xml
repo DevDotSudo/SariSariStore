@@ -11,19 +11,18 @@
 
     <!-- App Icon with Soft Shadow -->
     <com.google.android.material.card.MaterialCardView
-        android:layout_width="52dp"
-        android:layout_height="52dp"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
         app:cardBackgroundColor="@color/surface"
-        app:cardCornerRadius="5dp"
-        app:cardElevation="2dp">
+        app:cardCornerRadius="12dp"
+        app:cardElevation="3dp">
 
         <ImageView
-            android:layout_width="28dp"
-            android:layout_height="28dp"
-            android:layout_gravity="center"
-            android:src="@android:drawable/ic_menu_manage"
-            android:contentDescription="App Icon"
-            app:tint="@color/primary" />
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="6dp"
+            android:src="@mipmap/ic_launcher"
+            android:contentDescription="App Icon" />
     </com.google.android.material.card.MaterialCardView>
 
     <TextView
