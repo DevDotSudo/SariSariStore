@@ -15,21 +15,21 @@
     <dimen name="spacing_lg">24dp</dimen>
     <dimen name="spacing_xl">32dp</dimen>
 
-    <!-- Corner Radii -->
-    <dimen name="corner_xs">8dp</dimen>
-    <dimen name="corner_sm">12dp</dimen>
-    <dimen name="corner_md">16dp</dimen>
-    <dimen name="corner_lg">20dp</dimen>
-    <dimen name="corner_xl">28dp</dimen>
+    <!-- Corner Radii - All 5px -->
+    <dimen name="corner_xs">5dp</dimen>
+    <dimen name="corner_sm">5dp</dimen>
+    <dimen name="corner_md">5dp</dimen>
+    <dimen name="corner_lg">5dp</dimen>
+    <dimen name="corner_xl">5dp</dimen>
 
     <!-- Common Dimensions -->
     <dimen name="dialog_max_width">320dp</dimen>
-    <dimen name="dialog_corner_radius">28dp</dimen>
+    <dimen name="dialog_corner_radius">5dp</dimen>
     <dimen name="button_height_large">56dp</dimen>
     <dimen name="button_height_medium">48dp</dimen>
     <dimen name="button_height_small">44dp</dimen>
     <dimen name="fab_size">44dp</dimen>
-    <dimen name="fab_corner_radius">22dp</dimen>
+    <dimen name="fab_corner_radius">5dp</dimen>
     <dimen name="image_placeholder_size">100dp</dimen>
 </resources>
 

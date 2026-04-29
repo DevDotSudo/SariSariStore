@@ -48,6 +48,7 @@
 
     <!-- Instruction text -->
     <TextView
+        android:id="@+id/tv_instruction"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="20dp"
@@ -60,6 +61,23 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"/>
 
+    <!-- Scanning indicator (shows when barcode detected in center) -->
+    <TextView
+        android:id="@+id/tv_scanning_indicator"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:background="#99D81B60"
+        android:padding="8dp"
+        android:text="Scanning..."
+        android:textColor="@color/surface"
+        android:textSize="13sp"
+        android:textStyle="bold"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/viewfinder_overlay"/>
+
     <!-- Cancel Button -->
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btn_cancel"
@@ -69,7 +87,7 @@
         android:layout_marginBottom="48dp"
         android:text="Cancel"
         android:textColor="@color/surface"
-        app:cornerRadius="20dp"
+        app:cornerRadius="@dimen/corner_md"
         app:strokeColor="#66FF748B"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

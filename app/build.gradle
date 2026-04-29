@@ -40,6 +40,7 @@ dependencies {
     implementation libs.activity
     implementation libs.constraintlayout
     implementation libs.firebase.firestore
+    implementation libs.firebase.auth
     implementation(libs.guava)
     implementation libs.recyclerview
     implementation libs.cardview
@@ -59,6 +60,9 @@ dependencies {
     implementation libs.glide
     implementation libs.firebase.crashlytics.buildtools
     annotationProcessor libs.glide.compiler
+
+    // Material Icons Extended for more icon options
+    implementation 'androidx.core:core-ktx:1.12.0'
 
     testImplementation libs.junit
     androidTestImplementation libs.ext.junit

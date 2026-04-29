@@ -2,6 +2,8 @@ package com.magalona.sarisaristore.fragments;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -9,6 +11,7 @@ import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,8 +37,10 @@ import com.magalona.sarisaristore.databinding.DialogAddStockBinding;
 import com.magalona.sarisaristore.models.Product;
 import com.magalona.sarisaristore.utils.DialogHelper;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -125,7 +130,7 @@ public class StockFragment extends Fragment {
             public void onDeleteProduct(Product product) {
                 confirmDeleteProduct(product);
             }
-        });
+        }, true); // true = show action buttons
         binding.rvProducts.setLayoutManager(new LinearLayoutManager(requireContext()));
         binding.rvProducts.setAdapter(adapter);
 
@@ -143,21 +148,25 @@ public class StockFragment extends Fragment {
     }
 
     private void filter(String query) {
-        if (binding == null) return;
+        if (binding == null || adapter == null) return;
         filteredList.clear();
         if (TextUtils.isEmpty(query)) {
             filteredList.addAll(productList);
         } else {
             String lowerQuery = query.toLowerCase();
             for (Product p : productList) {
-                if (p.getName().toLowerCase().contains(lowerQuery) || 
-                    (p.getCategory() != null && p.getCategory().toLowerCase().contains(lowerQuery))) {
+                String productName = p.getName();
+                if (productName != null && productName.toLowerCase().contains(lowerQuery)) {
+                    filteredList.add(p);
+                } else if (p.getCategory() != null && p.getCategory().toLowerCase().contains(lowerQuery)) {
                     filteredList.add(p);
                 }
             }
         }
         adapter.notifyDataSetChanged();
-        binding.tvEmpty.setVisibility(filteredList.isEmpty() ? View.VISIBLE : View.GONE);
+        if (binding != null) {
+            binding.tvEmpty.setVisibility(filteredList.isEmpty() ? View.VISIBLE : View.GONE);
+        }
     }
 
     private void listenProducts() {
@@ -174,7 +183,9 @@ public class StockFragment extends Fragment {
                             productList.add(p);
                         }
                     }
-                    filter(binding.etSearch.getText().toString());
+                    if (binding.etSearch != null && binding.etSearch.getText() != null) {
+                        filter(binding.etSearch.getText().toString());
+                    }
                 });
     }
 
@@ -186,13 +197,19 @@ public class StockFragment extends Fragment {
 
         AlertDialog dialog = new MaterialAlertDialogBuilder(requireContext(), R.style.Theme_SariSariStore_Dialog)
                 .setView(dialogBinding.getRoot())
+                .setCancelable(false)
                 .create();
+        
+        dialog.setCanceledOnTouchOutside(false);
 
         dialogBinding.btnScanBarcode.setOnClickListener(v ->
                 barcodeLauncher.launch(new Intent(requireContext(), BarcodeScannerActivity.class)));
 
         dialogBinding.btnCamera.setOnClickListener(v -> launchCamera());
         dialogBinding.btnGallery.setOnClickListener(v -> launchGallery());
+
+        // Close button in header
+        dialogBinding.btnDialogClose.setOnClickListener(v -> dialog.dismiss());
 
         View.OnClickListener saveAction = v -> {
             if (saveNewProduct()) {
@@ -201,27 +218,50 @@ public class StockFragment extends Fragment {
         };
         
         dialogBinding.btnSaveProduct.setOnClickListener(saveAction);
-        dialogBinding.btnDialogSave.setOnClickListener(saveAction);
-        dialogBinding.btnDialogCancel.setOnClickListener(v -> dialog.dismiss());
 
         dialog.show();
     }
 
     private void showEditProductDialog(Product product) {
-        pendingBarcode = product.getBarcode();
-        pendingImageUri = (product.getImageUri() != null && !product.getImageUri().isEmpty()) ? Uri.parse(product.getImageUri()) : null;
+        if (product == null) return;
+
+        pendingBarcode = product.getBarcode() != null ? product.getBarcode() : "";
+        pendingImageUri = null; // ← reset, Base64 is not a URI
+
         dialogBinding = DialogAddProductBinding.inflate(getLayoutInflater());
         dialogBinding.tvDialogTitle.setText("Edit Product");
 
-        dialogBinding.etProductName.setText(product.getName());
-        dialogBinding.etCategory.setText(product.getCategory());
-        dialogBinding.etUnitPrice.setText(String.valueOf(product.getUnitPrice()));
-        dialogBinding.etInitialStock.setText(String.valueOf(product.getStockQuantity()));
-        dialogBinding.etBarcode.setText(product.getBarcode());
+        dialogBinding.etProductName.setText(product.getName() != null ? product.getName() : "");
+        dialogBinding.etCategory.setText(product.getCategory() != null ? product.getCategory() : "");
+        dialogBinding.etUnitPrice.setText(product.getUnitPrice() > 0 ? String.valueOf(product.getUnitPrice()) : "");
+        dialogBinding.etInitialStock.setText(product.getStockQuantity() > 0 ? String.valueOf(product.getStockQuantity()) : "0");
+        dialogBinding.etBarcode.setText(pendingBarcode);
+
+        // ── Load existing image into the ImageView ─────────────────────
+        String existingImage = product.getImageUri();
+        if (existingImage != null && !existingImage.isEmpty()) {
+            try {
+                String base64 = existingImage.contains(",")
+                        ? existingImage.substring(existingImage.indexOf(",") + 1)
+                        : existingImage;
+
+                byte[] bytes = Base64.decode(base64, Base64.NO_WRAP);
+                Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                if (bitmap != null) {
+                    dialogBinding.ivProductImage.setImageBitmap(bitmap);
+                }
+            } catch (Exception e) {
+                android.util.Log.e("StockFragment", "Failed to load existing image: " + e.getMessage());
+            }
+        }
+        // ── End image load ─────────────────────────────────────────────
 
         AlertDialog dialog = new MaterialAlertDialogBuilder(requireContext(), R.style.Theme_SariSariStore_Dialog)
                 .setView(dialogBinding.getRoot())
+                .setCancelable(false)
                 .create();
+
+        dialog.setCanceledOnTouchOutside(false);
 
         dialogBinding.btnScanBarcode.setOnClickListener(v ->
                 barcodeLauncher.launch(new Intent(requireContext(), BarcodeScannerActivity.class)));
@@ -229,17 +269,14 @@ public class StockFragment extends Fragment {
         dialogBinding.btnCamera.setOnClickListener(v -> launchCamera());
         dialogBinding.btnGallery.setOnClickListener(v -> launchGallery());
 
-        View.OnClickListener updateAction = v -> {
-            if (updateProduct(product.getId())) {
-                dialog.dismiss();
-            }
-        };
+        dialogBinding.btnDialogClose.setOnClickListener(v -> dialog.dismiss());
 
         dialogBinding.btnSaveProduct.setText("Update Product");
-        dialogBinding.btnDialogSave.setText("Update Product");
-        dialogBinding.btnSaveProduct.setOnClickListener(updateAction);
-        dialogBinding.btnDialogSave.setOnClickListener(updateAction);
-        dialogBinding.btnDialogCancel.setOnClickListener(v -> dialog.dismiss());
+        dialogBinding.btnSaveProduct.setOnClickListener(v -> {
+            if (updateProduct(product.getId(), product.getImageUri())) { // ← pass existing image
+                dialog.dismiss();
+            }
+        });
 
         dialog.show();
     }
@@ -259,17 +296,29 @@ public class StockFragment extends Fragment {
         try {
             double price = Double.parseDouble(priceStr);
             int qty = TextUtils.isEmpty(qtyStr) ? 0 : Integer.parseInt(qtyStr);
-            String imageRef = pendingImageUri != null ? pendingImageUri.toString() : "";
+            
+            // Convert image to Base64 if available
+            String base64Image = "";
+            if (pendingImageUri != null) {
+                base64Image = convertUriToBase64(pendingImageUri);
+                if (base64Image == null) base64Image = "";
+            }
 
-            Product product = new Product(name, category, price, qty, pendingBarcode, imageRef);
+            // Log Base64 string info for debugging
+            if (!base64Image.isEmpty()) {
+                String preview = base64Image.length() > 50 ? base64Image.substring(0, 50) + "..." : base64Image;
+                android.util.Log.d("StockFragment", "Saving Base64 image (length: " + base64Image.length() + "): " + preview);
+            }
+
+            Product product = new Product(name, category, price, qty, pendingBarcode, base64Image);
             db.addProduct(product)
                     .addOnSuccessListener(ref -> {
-                        if (getContext() != null) {
+                        if (getContext() != null && isAdded()) {
                             DialogHelper.showSuccess(requireContext(), "Success", "Product created successfully", null);
                         }
                     })
                     .addOnFailureListener(e -> {
-                        if (getContext() != null) {
+                        if (getContext() != null && isAdded()) {
                             DialogHelper.showError(requireContext(), "Error", 
                                 "Failed to save product: " + e.getMessage(), null);
                         }
@@ -281,7 +330,7 @@ public class StockFragment extends Fragment {
         }
     }
 
-    private boolean updateProduct(String productId) {
+    private boolean updateProduct(String productId, String existingBase64Image) {
         if (dialogBinding == null) return false;
         String name     = dialogBinding.etProductName.getText().toString().trim();
         String category = dialogBinding.etCategory.getText().toString().trim();
@@ -296,19 +345,33 @@ public class StockFragment extends Fragment {
         try {
             double price = Double.parseDouble(priceStr);
             int qty = TextUtils.isEmpty(qtyStr) ? 0 : Integer.parseInt(qtyStr);
-            String imageRef = pendingImageUri != null ? pendingImageUri.toString() : "";
 
-            Product product = new Product(name, category, price, qty, pendingBarcode, imageRef);
+            String base64Image;
+            if (pendingImageUri != null) {
+                // User picked a new image — convert it
+                String uriString = pendingImageUri.toString();
+                if (uriString.startsWith("content://") || uriString.startsWith("file://")) {
+                    base64Image = convertUriToBase64(pendingImageUri);
+                    if (base64Image == null) base64Image = existingBase64Image != null ? existingBase64Image : "";
+                } else {
+                    base64Image = existingBase64Image != null ? existingBase64Image : "";
+                }
+            } else {
+                // No new image picked — keep the existing one
+                base64Image = existingBase64Image != null ? existingBase64Image : "";
+            }
+
+            Product product = new Product(name, category, price, qty, pendingBarcode, base64Image);
             db.updateProduct(productId, product)
                     .addOnSuccessListener(v -> {
-                        if (getContext() != null) {
+                        if (getContext() != null && isAdded()) {
                             DialogHelper.showSuccess(requireContext(), "Success", "Product updated successfully", null);
                         }
                     })
                     .addOnFailureListener(e -> {
-                        if (getContext() != null) {
-                            DialogHelper.showError(requireContext(), "Error", 
-                                "Failed to update product: " + e.getMessage(), null);
+                        if (getContext() != null && isAdded()) {
+                            DialogHelper.showError(requireContext(), "Error",
+                                    "Failed to update product: " + e.getMessage(), null);
                         }
                     });
             return true;
@@ -319,18 +382,20 @@ public class StockFragment extends Fragment {
     }
 
     private void confirmDeleteProduct(Product product) {
+        if (product == null || product.getId() == null || getContext() == null) return;
+        
         DialogHelper.showConfirmation(requireContext(), 
             "Delete Product?", 
             "Are you sure you want to delete " + product.getName() + "? This action cannot be undone.",
             () -> {
                 db.deleteProduct(product.getId())
                         .addOnSuccessListener(v -> {
-                            if (getContext() != null) {
+                            if (getContext() != null && isAdded()) {
                                 DialogHelper.showSuccess(requireContext(), "Success", "Product deleted successfully", null);
                             }
                         })
                         .addOnFailureListener(e -> {
-                            if (getContext() != null) {
+                            if (getContext() != null && isAdded()) {
                                 DialogHelper.showError(requireContext(), "Error", 
                                     "Failed to delete product: " + e.getMessage(), null);
                             }
@@ -341,17 +406,23 @@ public class StockFragment extends Fragment {
     }
 
     private void showAddStockDialog(Product product) {
-         if (product == null) return;
+         if (product == null || product.getId() == null || getContext() == null) return;
          DialogAddStockBinding dlg = DialogAddStockBinding.inflate(getLayoutInflater());
          dlg.tvProductName.setText(product.getName() != null ? product.getName() : "");
          dlg.tvCurrentStock.setText("Currently in stock: " + product.getStockQuantity());
 
          AlertDialog dialog = new MaterialAlertDialogBuilder(requireContext(), R.style.Theme_SariSariStore_Dialog)
                  .setView(dlg.getRoot())
+                 .setCancelable(false)
                  .create();
+         
+         dialog.setCanceledOnTouchOutside(false);
+
+         // Close button in header
+         dlg.btnStockClose.setOnClickListener(v -> dialog.dismiss());
 
          dlg.btnUpdateStock.setOnClickListener(v -> {
-             String qtyStr = dlg.etAddQuantity.getText().toString().trim();
+             String qtyStr = dlg.etAddQuantity.getText() != null ? dlg.etAddQuantity.getText().toString().trim() : "";
              if (TextUtils.isEmpty(qtyStr)) {
                  DialogHelper.showError(requireContext(), "Invalid Input", "Please enter a quantity", null);
                  return;
@@ -364,13 +435,13 @@ public class StockFragment extends Fragment {
                  }
                  db.incrementStock(product.getId(), qty)
                          .addOnSuccessListener(res -> {
-                             if (getContext() != null) {
+                             if (getContext() != null && isAdded()) {
                                  DialogHelper.showSuccess(requireContext(), "Success", "Inventory updated successfully", 
                                      () -> dialog.dismiss());
                              }
                          })
                          .addOnFailureListener(e -> {
-                             if (getContext() != null) {
+                             if (getContext() != null && isAdded()) {
                                  DialogHelper.showError(requireContext(), "Error", 
                                      "Failed to update inventory: " + e.getMessage(), null);
                              }
@@ -399,6 +470,61 @@ public class StockFragment extends Fragment {
     private void launchGallery() {
         Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         galleryLauncher.launch(intent);
+    }
+
+    private String convertUriToBase64(Uri uri) {
+        try {
+            InputStream inputStream = requireContext().getContentResolver().openInputStream(uri);
+            if (inputStream == null) {
+                android.util.Log.e("StockFragment", "Cannot open input stream for URI: " + uri);
+                return null;
+            }
+            
+            Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
+            inputStream.close();
+            
+            if (bitmap == null) {
+                android.util.Log.e("StockFragment", "Failed to decode bitmap from URI");
+                return null;
+            }
+            
+            // Resize to reduce size (max 512px for better Firestore performance)
+            int maxDimension = 512;
+            int width = bitmap.getWidth();
+            int height = bitmap.getHeight();
+            float ratio = Math.min((float) maxDimension / width, (float) maxDimension / height);
+            
+            if (ratio < 1) {
+                int newWidth = Math.round(width * ratio);
+                int newHeight = Math.round(height * ratio);
+                bitmap = Bitmap.createScaledBitmap(bitmap, newWidth, newHeight, true);
+            }
+            
+            // Compress to JPEG with 60% quality (smaller size for Firestore)
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 60, baos);
+            byte[] imageBytes = baos.toByteArray();
+            
+            // Log size for debugging
+            int sizeKB = imageBytes.length / 1024;
+            android.util.Log.d("StockFragment", "Image size after compression: " + sizeKB + " KB");
+            
+            // Warn if image is too large for Firestore
+            if (sizeKB > 500) {
+                android.util.Log.w("StockFragment", "Image is large (" + sizeKB + " KB). Consider reducing quality further.");
+            }
+            
+            // Encode to Base64
+            String base64String = Base64.encodeToString(imageBytes, Base64.NO_WRAP);
+            
+            // Recycle bitmap to free memory
+            bitmap.recycle();
+            
+            return base64String;
+        } catch (Exception e) {
+            android.util.Log.e("StockFragment", "Error converting image to Base64: " + e.getMessage(), e);
+            return null;
+        }
     }
 
     private File createImageFile() throws IOException {

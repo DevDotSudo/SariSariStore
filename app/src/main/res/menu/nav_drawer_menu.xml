@@ -1,26 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <group android:id="@+id/group_main">
+    <group android:id="@+id/group_main" android:checkableBehavior="single">
         <item
             android:id="@+id/nav_dashboard"
-            android:icon="@android:drawable/ic_menu_view"
+            android:icon="@drawable/ic_nav_dashboard"
             android:title="Dashboard"/>
         <item
             android:id="@+id/nav_stock"
-            android:icon="@android:drawable/ic_menu_manage"
+            android:icon="@drawable/ic_nav_inventory"
             android:title="Inventory"/>
         <item
             android:id="@+id/nav_pos"
-            android:icon="@android:drawable/ic_menu_add"
+            android:icon="@drawable/ic_nav_pos"
             android:title="Point of Sale"/>
         <item
             android:id="@+id/nav_history"
-            android:icon="@android:drawable/ic_menu_recent_history"
+            android:icon="@drawable/ic_nav_history"
             android:title="Sales History"/>
         <item
             android:id="@+id/nav_low_stock"
-            android:icon="@android:drawable/ic_dialog_alert"
+            android:icon="@drawable/ic_nav_low_stock"
             android:title="Low Stock Alerts"/>
     </group>
 

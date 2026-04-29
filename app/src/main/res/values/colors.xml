@@ -1,70 +1,93 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Brand Primary - Vibrant Pink/Magenta -->
-    <color name="primary">#D81B60</color>
-    <color name="primary_light">#F06292</color>
-    <color name="primary_dark">#AD1457</color>
+    <!-- Brand Primary - Pink -->
+    <color name="primary">#FF3E9B</color>
+    <color name="primary_light">#FF88BA</color>
+    <color name="primary_dark">#E62D8A</color>
     <color name="on_primary">#FFFFFF</color>
 
-    <!-- Secondary - Deep Charcoal/Slate -->
-    <color name="secondary">#211F26</color>
-    <color name="on_secondary">#E0E0E0</color>
+    <!-- Secondary - Teal -->
+    <color name="secondary">#3A8B95</color>
+    <color name="secondary_light">#66D0BC</color>
+    <color name="on_secondary">#FFFFFF</color>
 
-    <!-- UI Backgrounds -->
-    <color name="background">#F8F9FA</color>
+    <!-- UI Backgrounds - White & Light Pink -->
+    <color name="background">#FFF5F9</color>
     <color name="surface">#FFFFFF</color>
-    <color name="surface_variant">#F1F3F4</color>
+    <color name="surface_variant">#FFE8F1</color>
+    <color name="surface_elevated">#FFFFFF</color>
     
-    <!-- Dark UI Components (Drawer, Dialogs) -->
-    <color name="dark_bg">#211F26</color>
-    <color name="dark_ui_bg">#211F26</color>
-    <color name="dark_surface">#2D2B33</color>
-    <color name="dark_drawer_bg">#211F26</color>
-    <color name="dark_dialog_outer">#211F26</color>
+    <!-- Dark UI Components -->
+    <color name="dark_bg">#CC2E7D</color>
+    <color name="dark_ui_bg">#E62D8A</color>
+    <color name="dark_surface">#FF3E9B</color>
+    <color name="dark_drawer_bg">#CC2E7D</color>
+    <color name="dark_dialog_outer">#E62D8A</color>
 
     <!-- Semantic Colors -->
-    <color name="success">#4CAF50</color>
+    <color name="success">#66D0BC</color>
     <color name="on_success">#FFFFFF</color>
-    <color name="error">#F44336</color>
+    <color name="error">#FF3E9B</color>
     <color name="on_error">#FFFFFF</color>
-    <color name="warning">#FFC107</color>
-    <color name="info">#2196F3</color>
+    <color name="warning">#FF88BA</color>
+    <color name="info">#3A8B95</color>
 
-    <!-- Specialized UI Elements (Matches previous requirements) -->
-    <color name="item_avatar_bg">#E4F1AC</color>
-    <color name="item_avatar_icon">#8BC34A</color>
-    <color name="item_stock_bg">#1A1A1A</color>
-    <color name="item_stock_text">#8BC34A</color>
-    <color name="item_add_bg">#E4F1AC</color>
-    <color name="item_add_icon">#3A6E0F</color>
+    <!-- Soft Accent Colors for Cards -->
+    <color name="accent_soft_blue">#FFE8F1</color>
+    <color name="accent_soft_purple">#F5E0F0</color>
+    <color name="accent_soft_pink">#FFE8F1</color>
+    <color name="accent_soft_green">#E8F8F3</color>
+    <color name="accent_soft_orange">#FFF0E8</color>
+    <color name="accent_soft_yellow">#FFF8E8</color>
+    <color name="accent_soft_red">#FFE8E8</color>
+    <color name="accent_soft_teal">#E8F5F3</color>
+    
+    <!-- Icon Background Colors -->
+    <color name="icon_bg_blue">#FFE8F1</color>
+    <color name="icon_bg_purple">#F5E0F0</color>
+    <color name="icon_bg_pink">#FFE8F1</color>
+    <color name="icon_bg_green">#E8F8F3</color>
+    <color name="icon_bg_orange">#FFF0E8</color>
+    <color name="icon_bg_teal">#E8F5F3</color>
+    <color name="icon_bg_red">#FFE8E8</color>
+    <color name="icon_bg_yellow">#FFF8E8</color>
+    
+    <!-- Legacy Item Colors -->
+    <color name="item_avatar_bg">#FFE8F1</color>
+    <color name="item_avatar_icon">#FF3E9B</color>
+    <color name="item_stock_bg">#E8F8F3</color>
+    <color name="item_stock_text">#3A8B95</color>
+    <color name="item_add_bg">#FFE8F1</color>
+    <color name="item_add_icon">#FF3E9B</color>
     
     <!-- Stock Badge Colors -->
-    <color name="stock_badge_bg">#1A1A1A</color>
-    <color name="stock_text_green">#8BC34A</color>
-
-    <!-- Accent Colors -->
-    <color name="accent_green_dark">#2E7D32</color>
-
-    <!-- Specific Icon BGs for Dashboard -->
-    <color name="icon_bg_pink">#FCE4EC</color>
-    <color name="icon_bg_teal">#E0F2F1</color>
-    <color name="icon_bg_green">#E8F5E9</color>
-    <color name="icon_bg_pink_light">#FCE4EC</color>
+    <color name="stock_badge_bg">#E8F8F3</color>
+    <color name="stock_text_green">#3A8B95</color>
 
     <!-- Text Colors -->
-    <color name="text_primary">#212121</color>
-    <color name="text_secondary">#757575</color>
-    <color name="text_hint">#BDBDBD</color>
-    <color name="text_on_dark">#E0E0E0</color>
+    <color name="text_primary">#2C3E50</color>
+    <color name="text_secondary">#5D6D7E</color>
+    <color name="text_hint">#AEB6BF</color>
+    <color name="text_muted">#D5D8DC</color>
+    <color name="text_on_dark">#FFF5F9</color>
     <color name="text_on_primary">#FFFFFF</color>
 
     <!-- Stroke Colors -->
-    <color name="stroke_default">#E0E0E0</color>
-    <color name="stroke_pink">#D81B60</color>
-    <color name="stroke_light_pink">#FCE4EC</color>
-    <color name="stroke_medium">#BDBDBD</color>
+    <color name="stroke_default">#FFE8F1</color>
+    <color name="stroke_light">#FFF0F5</color>
+    <color name="stroke_medium">#FF88BA</color>
 
-    <!-- Gradient -->
-    <color name="gradient_start">#D81B60</color>
-    <color name="gradient_end">#EC407A</color>
+    <!-- Shadow Colors -->
+    <color name="shadow_light">#FF3E9B08</color>
+    <color name="shadow_medium">#FF3E9B12</color>
+    <color name="shadow_dark">#FF3E9B1A</color>
+
+    <!-- Gradients (Solid colors instead of gradients) -->
+    <color name="gradient_start">#FF3E9B</color>
+    <color name="gradient_middle">#FF3E9B</color>
+    <color name="gradient_end">#FF3E9B</color>
+    
+    <!-- Glass Effect -->
+    <color name="glass_background">#FFFFFFF5</color>
+    <color name="glass_border">#FFFFFF40</color>
 </resources>

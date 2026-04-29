@@ -75,10 +75,12 @@ public class SalesHistoryAdapter extends RecyclerView.Adapter<SalesHistoryAdapte
                 b.tvSaleItems.setText("");
             }
 
-            itemView.setOnLongClickListener(v -> {
-                listener.onDeleteSale(record);
-                return true;
-            });
+            if (listener != null) {
+                itemView.setOnLongClickListener(v -> {
+                    listener.onDeleteSale(record);
+                    return true;
+                });
+            }
         }
     }
 }

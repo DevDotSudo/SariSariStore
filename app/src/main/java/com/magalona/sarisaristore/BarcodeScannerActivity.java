@@ -3,7 +3,11 @@ package com.magalona.sarisaristore;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Rect;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.util.Log;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -35,6 +39,13 @@ public class BarcodeScannerActivity extends AppCompatActivity {
     private ActivityBarcodeScannerBinding binding;
     private ExecutorService cameraExecutor;
     private boolean resultSent = false;
+    
+    // Center validation and delay
+    private Handler mainHandler = new Handler(Looper.getMainLooper());
+    private Runnable scanRunnable;
+    private long barcodeDetectedTime = 0;
+    private static final long SCAN_DELAY_MS = 2000; // 2 seconds delay before scanning
+    private static final String TAG = "BarcodeScanner";
 
     private final ActivityResultLauncher<String> requestPermissionLauncher =
             registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
@@ -98,12 +109,59 @@ public class BarcodeScannerActivity extends AppCompatActivity {
                     scanner.process(image)
                             .addOnSuccessListener(barcodes -> {
                                 if (!barcodes.isEmpty() && !resultSent) {
-                                    resultSent = true;
-                                    String value = barcodes.get(0).getRawValue();
-                                    Intent result = new Intent();
-                                    result.putExtra(EXTRA_BARCODE, value);
-                                    setResult(RESULT_OK, result);
-                                    finish();
+                                    Barcode barcode = barcodes.get(0);
+                                    
+                                    // Check if barcode is in the center viewfinder
+                                    if (isBarcodeInCenterViewfinder(barcode, imageProxy.getWidth(), imageProxy.getHeight())) {
+                                        // Show scanning indicator
+                                        runOnUiThread(() -> {
+                                            binding.tvScanningIndicator.setVisibility(android.view.View.VISIBLE);
+                                            binding.tvInstruction.setVisibility(android.view.View.GONE);
+                                        });
+                                        
+                                        // If this is the first detection or barcode changed, start timer
+                                        if (barcodeDetectedTime == 0) {
+                                            barcodeDetectedTime = System.currentTimeMillis();
+                                            
+                                            // Schedule scan after delay
+                                            scanRunnable = () -> {
+                                                if (!resultSent) {
+                                                    resultSent = true;
+                                                    String value = barcode.getRawValue();
+                                                    Log.d(TAG, "Barcode scanned after delay: " + value);
+                                                    Intent result = new Intent();
+                                                    result.putExtra(EXTRA_BARCODE, value);
+                                                    setResult(RESULT_OK, result);
+                                                    finish();
+                                                }
+                                            };
+                                            mainHandler.postDelayed(scanRunnable, SCAN_DELAY_MS);
+                                        }
+                                        // If same barcode detected again, check if delay has passed
+                                        else if (System.currentTimeMillis() - barcodeDetectedTime >= SCAN_DELAY_MS) {
+                                            // Delay already passed, scan immediately
+                                            if (scanRunnable != null) {
+                                                mainHandler.removeCallbacks(scanRunnable);
+                                            }
+                                            resultSent = true;
+                                            String value = barcode.getRawValue();
+                                            Log.d(TAG, "Barcode scanned: " + value);
+                                            Intent result = new Intent();
+                                            result.putExtra(EXTRA_BARCODE, value);
+                                            setResult(RESULT_OK, result);
+                                            finish();
+                                        }
+                                    } else {
+                                        // Barcode not in center, reset timer and hide indicator
+                                        barcodeDetectedTime = 0;
+                                        if (scanRunnable != null) {
+                                            mainHandler.removeCallbacks(scanRunnable);
+                                        }
+                                        runOnUiThread(() -> {
+                                            binding.tvScanningIndicator.setVisibility(android.view.View.GONE);
+                                            binding.tvInstruction.setVisibility(android.view.View.VISIBLE);
+                                        });
+                                    }
                                 }
                             })
                             .addOnCompleteListener(t -> imageProxy.close());
@@ -124,5 +182,50 @@ public class BarcodeScannerActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         cameraExecutor.shutdown();
+        if (scanRunnable != null) {
+            mainHandler.removeCallbacks(scanRunnable);
+        }
+    }
+    
+    /**
+     * Check if the barcode is within the center viewfinder rectangle
+     */
+    private boolean isBarcodeInCenterViewfinder(Barcode barcode, int imageWidth, int imageHeight) {
+        Rect boundingBox = barcode.getBoundingBox();
+        if (boundingBox == null) {
+            return false;
+        }
+        
+        // Get the center point of the barcode
+        int barcodeCenterX = boundingBox.centerX();
+        int barcodeCenterY = boundingBox.centerY();
+        
+        // Viewfinder dimensions from layout (240dp x 160dp)
+        // Convert to pixels (approximately, will be close enough for this use case)
+        float density = getResources().getDisplayMetrics().density;
+        int viewfinderWidthPx = (int) (240 * density);
+        int viewfinderHeightPx = (int) (160 * density);
+        
+        // Calculate viewfinder center in image coordinates
+        // The viewfinder is centered on screen, so we need to map it to image coordinates
+        int viewfinderCenterX = imageWidth / 2;
+        int viewfinderCenterY = imageHeight / 2;
+        
+        // Calculate viewfinder bounds in image coordinates
+        int viewfinderLeft = viewfinderCenterX - (viewfinderWidthPx / 2);
+        int viewfinderRight = viewfinderCenterX + (viewfinderWidthPx / 2);
+        int viewfinderTop = viewfinderCenterY - (viewfinderHeightPx / 2);
+        int viewfinderBottom = viewfinderCenterY + (viewfinderHeightPx / 2);
+        
+        // Check if barcode center is within viewfinder bounds
+        boolean isInCenter = barcodeCenterX >= viewfinderLeft && 
+                            barcodeCenterX <= viewfinderRight &&
+                            barcodeCenterY >= viewfinderTop && 
+                            barcodeCenterY <= viewfinderBottom;
+        
+        Log.d(TAG, String.format("Barcode center: (%d, %d), Viewfinder: (%d,%d)-(%d,%d), In center: %b",
+                barcodeCenterX, barcodeCenterY, viewfinderLeft, viewfinderTop, viewfinderRight, viewfinderBottom, isInCenter));
+        
+        return isInCenter;
     }
 }

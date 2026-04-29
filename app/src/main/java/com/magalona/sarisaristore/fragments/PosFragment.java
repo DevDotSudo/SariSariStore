@@ -89,7 +89,7 @@ public class PosFragment extends Fragment {
     private void fetchProductByBarcode(String barcode) {
         db.getProductByBarcode(barcode).get()
                 .addOnSuccessListener(snap -> {
-                    if (binding == null) return;
+                    if (binding == null || getContext() == null) return;
                     if (snap.isEmpty()) {
                         DialogHelper.showError(requireContext(), "Product Not Found", "No product found with barcode: " + barcode, null);
                         return;
@@ -101,7 +101,7 @@ public class PosFragment extends Fragment {
                     }
                 })
                 .addOnFailureListener(e -> {
-                    if (binding == null) return;
+                    if (binding == null || getContext() == null) return;
                     DialogHelper.showError(requireContext(), "Error", e.getMessage(), null);
                 });
     }
@@ -109,7 +109,7 @@ public class PosFragment extends Fragment {
     private void showProductPickerDialog() {
          db.getProductsCollection().orderBy("name").get()
                  .addOnSuccessListener(snap -> {
-                     if (binding == null) return;
+                     if (binding == null || getContext() == null) return;
                      List<Product> products = new ArrayList<>();
                      for (DocumentSnapshot doc : snap.getDocuments()) {
                          Product p = doc.toObject(Product.class);
@@ -138,48 +138,60 @@ public class PosFragment extends Fragment {
                              .show();
                  })
                  .addOnFailureListener(e -> {
-                     if (binding == null) return;
+                     if (binding == null || getContext() == null) return;
                      DialogHelper.showError(requireContext(), "Error", e.getMessage(), null);
                  });
      }
 
     private void promptQuantity(Product product) {
-         if (getContext() == null || product == null) return;
+         if (getContext() == null || product == null || binding == null) return;
          DialogSelectProductBinding dlg = DialogSelectProductBinding.inflate(LayoutInflater.from(requireContext()));
          dlg.tvProductName.setText(product.getName() != null ? product.getName() : "");
          dlg.tvStock.setText("Available Stock: " + product.getStockQuantity());
 
          androidx.appcompat.app.AlertDialog dialog = new MaterialAlertDialogBuilder(requireContext(), R.style.Theme_SariSariStore_Dialog)
                  .setView(dlg.getRoot())
+                 .setCancelable(false)
                  .create();
+         
+         dialog.setCanceledOnTouchOutside(false);
+
+         // Close button in header
+         if (dlg.btnClose != null) {
+             dlg.btnClose.setOnClickListener(v -> dialog.dismiss());
+         }
 
          dlg.btnConfirm.setOnClickListener(v -> {
-             String qtyStr = dlg.etQuantity.getText().toString().trim();
+             String qtyStr = dlg.etQuantity.getText() != null ? dlg.etQuantity.getText().toString().trim() : "";
              if (TextUtils.isEmpty(qtyStr)) return;
              try {
                  int qty = Integer.parseInt(qtyStr);
                  if (qty <= 0) {
-                     DialogHelper.showError(requireContext(), "Invalid Input", "Please enter a quantity greater than 0", null);
+                     if (getContext() != null) {
+                         DialogHelper.showError(requireContext(), "Invalid Input", "Please enter a quantity greater than 0", null);
+                     }
                      return;
                  }
                  if (qty > product.getStockQuantity()) {
-                     DialogHelper.showError(requireContext(), "Insufficient Stock", "Only " + product.getStockQuantity() + " items available.", null);
+                     if (getContext() != null) {
+                         DialogHelper.showError(requireContext(), "Insufficient Stock", "Only " + product.getStockQuantity() + " items available.", null);
+                     }
                      return;
                  }
                  addToCart(product, qty);
                  dialog.dismiss();
              } catch (NumberFormatException e) {
-                 DialogHelper.showError(requireContext(), "Invalid Input", "Please enter a valid number for quantity", null);
+                 if (getContext() != null) {
+                     DialogHelper.showError(requireContext(), "Invalid Input", "Please enter a valid number for quantity", null);
+                 }
              }
          });
-
-         dlg.btnCancel.setOnClickListener(v -> dialog.dismiss());
 
          dialog.show();
      }
 
     private void addToCart(Product product, int qty) {
-         if (product == null || product.getId() == null) return;
+         if (product == null || product.getId() == null || getContext() == null) return;
          for (CartItem item : cartItems) {
              if (item != null && item.getProduct() != null && item.getProduct().getId() != null && item.getProduct().getId().equals(product.getId())) {
                  int newQty = item.getQuantity() + qty;
@@ -210,8 +222,12 @@ public class PosFragment extends Fragment {
         if (binding == null) return;
         double total = 0;
         for (CartItem item : cartItems) total += item.getSubtotal();
-        binding.tvTotal.setText(String.format(Locale.getDefault(), "₱ %.2f", total));
-        binding.btnCheckout.setEnabled(!cartItems.isEmpty());
+        binding.tvTotalAmount.setText(String.format(Locale.getDefault(), "₱ %.2f", total));
+        
+        boolean hasItems = !cartItems.isEmpty();
+        binding.btnCheckout.setEnabled(hasItems);
+        binding.btnCheckout.setAlpha(hasItems ? 1.0f : 0.5f);
+        
         binding.tvEmptyCart.setVisibility(cartItems.isEmpty() ? View.VISIBLE : View.GONE);
     }
 
@@ -230,23 +246,25 @@ public class PosFragment extends Fragment {
     }
 
     private void executeCheckout(double total) {
-        if (binding == null) return;
+        if (binding == null || getContext() == null) return;
         binding.btnCheckout.setEnabled(false);
+        binding.btnCheckout.setAlpha(0.5f);
         
         List<CartItem> snapshot = new ArrayList<>(cartItems);
         
         db.checkout(snapshot, total)
                 .addOnSuccessListener(v -> {
-                    if (binding == null) return;
+                    if (binding == null || getContext() == null) return;
                     DialogHelper.showSuccess(requireContext(), "Sale Completed", "Transaction recorded successfully.", null);
                     cartItems.clear();
                     cartAdapter.notifyDataSetChanged();
                     updateTotal();
                 })
                 .addOnFailureListener(e -> {
-                    if (binding == null) return;
+                    if (binding == null || getContext() == null) return;
                     DialogHelper.showError(requireContext(), "Checkout Failed", e.getMessage(), null);
                     binding.btnCheckout.setEnabled(true);
+                    binding.btnCheckout.setAlpha(1.0f);
                 });
     }
 

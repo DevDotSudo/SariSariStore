@@ -14,6 +14,7 @@ public class Product {
     private int stockQuantity;
     private String barcode;
     private String imageUri;
+    private boolean lowStock; // ← added for Firestore mapping
 
     @ServerTimestamp
     private Date createdAt;
@@ -54,7 +55,13 @@ public class Product {
     public Date getCreatedAt() { return createdAt; }
     public void setCreatedAt(Date createdAt) { this.createdAt = createdAt; }
 
+    // Computed — not stored in Firestore
     public boolean isLowStock() {
         return stockQuantity < 5;
+    }
+
+    // Setter exists so Firestore doesn't throw a warning, but value is ignored
+    public void setLowStock(boolean lowStock) {
+        // intentionally ignored — computed from stockQuantity
     }
 }

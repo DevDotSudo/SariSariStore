@@ -17,6 +17,8 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
  */
 public class DialogHelper {
 
+    private static AlertDialog loadingDialog;
+
     public interface DialogCallback {
         void onAction();
     }
@@ -55,6 +57,8 @@ public class DialogHelper {
                 .setView(view)
                 .setCancelable(false)
                 .create();
+        
+        dialog.setCanceledOnTouchOutside(false);
 
         if (btnConfirm != null) {
             btnConfirm.setOnClickListener(v -> {
@@ -78,6 +82,10 @@ public class DialogHelper {
      * Display a loading dialog with optional message.
      */
     public static AlertDialog showLoading(Context context, String message) {
+        if (loadingDialog != null && loadingDialog.isShowing()) {
+            loadingDialog.dismiss();
+        }
+
         LayoutInflater inflater = LayoutInflater.from(context);
         View view = inflater.inflate(R.layout.dialog_loading, null);
 
@@ -86,13 +94,25 @@ public class DialogHelper {
             tvMessage.setText(message);
         }
 
-        AlertDialog dialog = new MaterialAlertDialogBuilder(context, R.style.Theme_SariSariStore_Dialog)
+        loadingDialog = new MaterialAlertDialogBuilder(context, R.style.Theme_SariSariStore_Dialog)
                 .setView(view)
                 .setCancelable(false)
                 .create();
+        
+        loadingDialog.setCanceledOnTouchOutside(false);
 
-        dialog.show();
-        return dialog;
+        loadingDialog.show();
+        return loadingDialog;
+    }
+
+    /**
+     * Hide the loading dialog if it's showing.
+     */
+    public static void hideLoading() {
+        if (loadingDialog != null && loadingDialog.isShowing()) {
+            loadingDialog.dismiss();
+            loadingDialog = null;
+        }
     }
 
     /**
@@ -138,6 +158,8 @@ public class DialogHelper {
                     .setView(view)
                     .setCancelable(false)
                     .create();
+            
+            dialog.setCanceledOnTouchOutside(false);
 
             if (btnAction != null) {
                 btnAction.setOnClickListener(v -> {
@@ -163,6 +185,8 @@ public class DialogHelper {
                     .setView(view)
                     .setCancelable(false)
                     .create();
+            
+            dialog.setCanceledOnTouchOutside(false);
 
             if (btnAction != null) {
                 btnAction.setOnClickListener(v -> {

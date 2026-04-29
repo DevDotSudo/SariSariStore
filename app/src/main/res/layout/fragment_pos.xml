@@ -6,242 +6,283 @@
     android:layout_height="match_parent"
     android:background="@color/background">
 
+    <!-- Header with Gradient -->
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="100dp"
         android:background="@android:color/transparent"
         app:elevation="0dp">
 
+        <com.google.android.material.appbar.CollapsingToolbarLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/bg_gradient_primary"
+            app:layout_scrollFlags="scroll|exitUntilCollapsed">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:paddingStart="20dp"
+                android:paddingTop="16dp"
+                android:paddingEnd="20dp"
+                android:paddingBottom="16dp"
+                android:gravity="center_vertical"
+                app:layout_collapseMode="parallax">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+                
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Point of Sale"
+                        android:textColor="@color/surface"
+                        android:textSize="28sp"
+                        android:textStyle="bold" />
+                
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:text="Process new orders"
+                        android:textColor="@color/surface"
+                        android:textSize="13sp"
+                        android:alpha="0.85" />
+                </LinearLayout>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_clear_cart"
+                    style="@style/Widget.Material3.Button.OutlinedButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:text="Clear Cart"
+                    android:textColor="@color/surface"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    app:cornerRadius="10dp"
+                    app:strokeColor="@color/surface"
+                    app:strokeWidth="2dp" />
+            </LinearLayout>
+        </com.google.android.material.appbar.CollapsingToolbarLayout>
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <!-- Content Container -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
+
+        <!-- Action Buttons -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/primary"
             android:orientation="horizontal"
-            android:paddingStart="20dp"
-            android:paddingTop="50dp"
-            android:paddingEnd="20dp"
-            android:paddingBottom="60dp"
-            android:gravity="center_vertical">
+            android:paddingHorizontal="20dp"
+            android:paddingTop="8dp">
 
-            <LinearLayout
+            <!-- Scan Barcode Card -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/btn_scan_add"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:orientation="vertical">
+                android:layout_marginEnd="10dp"
+                android:foreground="?attr/selectableItemBackground"
+                app:cardBackgroundColor="@color/surface"
+                app:cardCornerRadius="5dp"
+                app:cardElevation="2dp"
+                app:strokeWidth="0dp">
 
-                <TextView
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Point of Sale"
-                    android:textColor="@color/surface"
-                    android:textSize="24sp"
-                    android:textStyle="bold"/>
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:padding="20dp">
 
-                <TextView
-                    android:layout_width="wrap_content"
+                    <com.google.android.material.card.MaterialCardView
+                        android:layout_width="52dp"
+                        android:layout_height="52dp"
+                        android:layout_marginBottom="12dp"
+                        app:cardBackgroundColor="@color/accent_soft_pink"
+                        app:cardCornerRadius="5dp"
+                        app:cardElevation="0dp">
+
+                        <ImageView
+                            android:layout_width="26dp"
+                            android:layout_height="26dp"
+                            android:layout_gravity="center"
+                            android:src="@android:drawable/ic_menu_camera"
+                            app:tint="@color/primary" />
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Scan Barcode"
+                        android:textColor="@color/text_primary"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Browse Items Card -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/btn_browse_add"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="10dp"
+                android:foreground="?attr/selectableItemBackground"
+                app:cardBackgroundColor="@color/surface"
+                app:cardCornerRadius="5dp"
+                app:cardElevation="2dp"
+                app:strokeWidth="0dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:alpha="0.9"
-                    android:text="Process new orders"
-                    android:textColor="@color/surface"
-                    android:textSize="14sp"/>
-            </LinearLayout>
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:padding="20dp">
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn_clear_cart"
-                style="@style/Widget.Material3.Button.OutlinedButton"
-                android:layout_width="wrap_content"
-                android:layout_height="40dp"
-                android:text="Empty Cart"
-                android:textColor="@color/surface"
-                android:textSize="12sp"
-                app:cornerRadius="8dp"
-                app:strokeColor="#80FFFFFF"
-                app:strokeWidth="1dp"/>
+                    <com.google.android.material.card.MaterialCardView
+                        android:layout_width="52dp"
+                        android:layout_height="52dp"
+                        android:layout_marginBottom="12dp"
+                        app:cardBackgroundColor="@color/accent_soft_teal"
+                        app:cardCornerRadius="5dp"
+                        app:cardElevation="0dp">
+
+                        <ImageView
+                            android:layout_width="26dp"
+                            android:layout_height="26dp"
+                            android:layout_gravity="center"
+                            android:src="@android:drawable/ic_menu_search"
+                            app:tint="@color/secondary" />
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Browse Items"
+                        android:textColor="@color/text_primary"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
         </LinearLayout>
-    </com.google.android.material.appbar.AppBarLayout>
 
-    <!-- Floating Action Row -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:paddingHorizontal="16dp"
-        app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
-        android:layout_marginTop="-30dp">
-
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/btn_scan_add"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_marginEnd="8dp"
-            app:cardBackgroundColor="@color/surface"
-            app:cardCornerRadius="16dp"
-            app:cardElevation="6dp"
-            app:strokeWidth="0dp"
-            android:foreground="?attr/selectableItemBackground">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:orientation="vertical"
-                android:padding="16dp">
-
-                <com.google.android.material.card.MaterialCardView
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:layout_marginBottom="8dp"
-                    app:cardBackgroundColor="@color/icon_bg_pink"
-                    app:cardCornerRadius="10dp"
-                    app:cardElevation="0dp">
-                    <ImageView
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
-                        android:layout_gravity="center"
-                        android:src="@android:drawable/ic_menu_camera"
-                        app:tint="@color/primary"/>
-                </com.google.android.material.card.MaterialCardView>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Scan Item"
-                    android:textColor="@color/text_primary"
-                    android:textSize="12sp"
-                    android:textStyle="bold"/>
-            </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
-
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/btn_browse_add"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_marginStart="8dp"
-            app:cardBackgroundColor="@color/surface"
-            app:cardCornerRadius="16dp"
-            app:cardElevation="6dp"
-            app:strokeWidth="0dp"
-            android:foreground="?attr/selectableItemBackground">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:orientation="vertical"
-                android:padding="16dp">
-
-                <com.google.android.material.card.MaterialCardView
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:layout_marginBottom="8dp"
-                    app:cardBackgroundColor="#E0F2F1"
-                    app:cardCornerRadius="10dp"
-                    app:cardElevation="0dp">
-                    <ImageView
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
-                        android:layout_gravity="center"
-                        android:src="@android:drawable/ic_menu_search"
-                        app:tint="#00897B"/>
-                </com.google.android.material.card.MaterialCardView>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Browse Items"
-                    android:textColor="@color/text_primary"
-                    android:textSize="12sp"
-                    android:textStyle="bold"/>
-            </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
+        <!-- Cart List -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_cart"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="16dp"
+            android:clipToPadding="false"
+            android:paddingHorizontal="20dp"
+            android:paddingTop="8dp"
+            android:paddingBottom="200dp" />
     </LinearLayout>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_cart"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="80dp"
-        android:clipToPadding="false"
-        android:paddingHorizontal="16dp"
-        android:paddingBottom="140dp"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
-
+    <!-- Empty Cart State -->
     <TextView
         android:id="@+id/tv_empty_cart"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:text="Your cart is currently empty"
+        android:text="Your cart is empty"
         android:textColor="@color/text_secondary"
-        android:textSize="14sp"
-        android:visibility="gone"/>
+        android:textSize="15sp"
+        android:visibility="gone" />
 
-    <!-- Checkout Footer -->
+    <!-- Checkout Footer - Floating Card -->
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/card_checkout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="24dp"
         app:cardBackgroundColor="@color/surface"
-        app:cardCornerRadius="24dp"
-        app:cardElevation="16dp"
-        app:strokeWidth="1dp"
-        app:strokeColor="@color/stroke_default"
-        android:layout_marginBottom="-12dp">
+        app:cardCornerRadius="5dp"
+        app:cardElevation="4dp"
+        app:strokeWidth="0dp">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="24dp"
-            android:paddingBottom="36dp">
+            android:padding="22dp">
 
+            <!-- Total Section -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:orientation="horizontal"
                 android:gravity="center_vertical"
-                android:layout_marginBottom="20dp"
-                android:orientation="horizontal">
+                android:layout_marginBottom="16dp">
 
-                <TextView
+                <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Total Amount Due"
-                    android:textColor="@color/text_secondary"
-                    android:textSize="12sp"
-                    android:textStyle="bold"
-                    android:letterSpacing="0.05"/>
+                    android:orientation="vertical">
 
-                <TextView
-                    android:id="@+id/tv_total"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="₱ 0.00"
-                    android:textColor="@color/primary"
-                    android:textSize="26sp"
-                    android:textStyle="bold"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Total Amount"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="14sp" />
+
+                    <TextView
+                        android:id="@+id/tv_total_amount"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:text="₱0.00"
+                        android:textColor="@color/text_primary"
+                        android:textSize="28sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    app:cardBackgroundColor="@color/accent_soft_green"
+                    app:cardCornerRadius="5dp"
+                    app:cardElevation="0dp">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:text="₱"
+                        android:textColor="@color/success"
+                        android:textSize="22sp"
+                        android:textStyle="bold" />
+                </com.google.android.material.card.MaterialCardView>
             </LinearLayout>
 
+            <!-- Checkout Button -->
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_checkout"
                 android:layout_width="match_parent"
-                android:layout_height="60dp"
-                android:enabled="false"
-                android:text="Complete Transaction"
+                android:layout_height="58dp"
+                android:text="Checkout"
                 android:textColor="@color/surface"
                 android:textSize="16sp"
                 android:textStyle="bold"
                 app:backgroundTint="@color/primary"
-                app:cornerRadius="16dp"
-                app:icon="@android:drawable/ic_menu_add"
-                app:iconGravity="textStart"
-                app:iconPadding="12dp"
-                app:iconSize="20dp"
-                app:iconTint="@color/surface"/>
+                app:cornerRadius="5dp"
+                app:elevation="2dp" />
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
 
