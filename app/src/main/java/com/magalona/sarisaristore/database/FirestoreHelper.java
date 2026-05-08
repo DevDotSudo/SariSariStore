@@ -3,6 +3,7 @@ package com.magalona.sarisaristore.database;
 import android.util.Log;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FieldValue;
@@ -23,12 +24,22 @@ public class FirestoreHelper {
     private static FirestoreHelper instance;
     private final FirebaseFirestore db;
 
+    public static final String COLLECTION_USERS = "users";
     public static final String COLLECTION_PRODUCTS = "products";
     public static final String COLLECTION_SALES    = "sales_history";
     public static final int    LOW_STOCK_THRESHOLD = 5;
 
     private FirestoreHelper() {
         db = FirebaseFirestore.getInstance();
+    }
+
+    private String getCurrentUserId() {
+        String userId = FirebaseAuth.getInstance().getCurrentUser() != null ? 
+            FirebaseAuth.getInstance().getCurrentUser().getUid() : null;
+        if (userId == null) {
+            throw new IllegalStateException("User is not authenticated");
+        }
+        return userId;
     }
 
     public static FirestoreHelper getInstance() {
@@ -43,53 +54,62 @@ public class FirestoreHelper {
     // ── Products ──────────────────────────────────────────────────────────────
 
     public CollectionReference getProductsCollection() {
-        return db.collection(COLLECTION_PRODUCTS);
+        String userId = getCurrentUserId();
+        return db.collection(COLLECTION_USERS).document(userId).collection(COLLECTION_PRODUCTS);
     }
 
     public Task<DocumentReference> addProduct(Product product) {
-        return db.collection(COLLECTION_PRODUCTS).add(product);
+        String userId = getCurrentUserId();
+        return db.collection(COLLECTION_USERS).document(userId).collection(COLLECTION_PRODUCTS).add(product);
     }
 
     public Task<Void> updateProduct(String productId, Product product) {
         if (productId == null) return Tasks.forException(new IllegalArgumentException("Product ID cannot be null"));
-        return db.collection(COLLECTION_PRODUCTS).document(productId).set(product);
+        String userId = getCurrentUserId();
+        return db.collection(COLLECTION_USERS).document(userId).collection(COLLECTION_PRODUCTS).document(productId).set(product);
     }
 
     public Task<Void> updateProductFields(String productId, Map<String, Object> updates) {
         if (productId == null) return Tasks.forException(new IllegalArgumentException("Product ID cannot be null"));
-        return db.collection(COLLECTION_PRODUCTS).document(productId).update(updates);
+        String userId = getCurrentUserId();
+        return db.collection(COLLECTION_USERS).document(userId).collection(COLLECTION_PRODUCTS).document(productId).update(updates);
     }
 
     public Task<Void> deleteProduct(String productId) {
         if (productId == null) return Tasks.forException(new IllegalArgumentException("Product ID cannot be null"));
-        return db.collection(COLLECTION_PRODUCTS).document(productId).delete();
+        String userId = getCurrentUserId();
+        return db.collection(COLLECTION_USERS).document(userId).collection(COLLECTION_PRODUCTS).document(productId).delete();
     }
 
     public Task<Void> incrementStock(String productId, int addAmount) {
         if (productId == null) return Tasks.forException(new IllegalArgumentException("Product ID cannot be null"));
-        return db.collection(COLLECTION_PRODUCTS)
+        String userId = getCurrentUserId();
+        return db.collection(COLLECTION_USERS).document(userId).collection(COLLECTION_PRODUCTS)
                 .document(productId)
                 .update("stockQuantity", FieldValue.increment(addAmount));
     }
 
     public Query getProductByBarcode(String barcode) {
-        return db.collection(COLLECTION_PRODUCTS)
+        String userId = getCurrentUserId();
+        return db.collection(COLLECTION_USERS).document(userId).collection(COLLECTION_PRODUCTS)
                 .whereEqualTo("barcode", barcode)
                 .limit(1);
     }
 
     public Query getLowStockProducts() {
-        return db.collection(COLLECTION_PRODUCTS)
+        String userId = getCurrentUserId();
+        return db.collection(COLLECTION_USERS).document(userId).collection(COLLECTION_PRODUCTS)
                 .whereLessThan("stockQuantity", LOW_STOCK_THRESHOLD);
     }
 
     // ── Sales ─────────────────────────────────────────────────────────────────
 
     public CollectionReference getSalesCollection() {
-        return db.collection(COLLECTION_SALES);
+        String userId = getCurrentUserId();
+        return db.collection(COLLECTION_USERS).document(userId).collection(COLLECTION_SALES);
     }
 
-    public Task<Void> checkout(List<CartItem> cartItems, double total) {
+    public Task<Void> checkout(List<CartItem> cartItems, double total, String userId) {
         if (cartItems == null || cartItems.isEmpty()) {
             return Tasks.forException(new IllegalArgumentException("Cart is empty"));
         }
@@ -104,8 +124,8 @@ public class FirestoreHelper {
                     continue;
                 }
 
-                // Deduct stock
-                DocumentReference productRef = db.collection(COLLECTION_PRODUCTS)
+                // Deduct stock - use user-specific product reference
+                DocumentReference productRef = db.collection(COLLECTION_USERS).document(userId).collection(COLLECTION_PRODUCTS)
                         .document(item.getProduct().getId());
                 batch.update(productRef, "stockQuantity",
                         FieldValue.increment(-item.getQuantity()));
@@ -124,13 +144,14 @@ public class FirestoreHelper {
                 return Tasks.forException(new Exception("No valid items in cart to checkout"));
             }
 
-            // Sale record document
+            // Sale record document - use user-specific sales collection
             Map<String, Object> saleRecord = new HashMap<>();
             saleRecord.put("items",       saleItems);
             saleRecord.put("totalAmount", total);
+            saleRecord.put("userId",      userId);
             saleRecord.put("timestamp",   FieldValue.serverTimestamp());
 
-            DocumentReference saleRef = db.collection(COLLECTION_SALES).document();
+            DocumentReference saleRef = db.collection(COLLECTION_USERS).document(userId).collection(COLLECTION_SALES).document();
             batch.set(saleRef, saleRecord);
 
             return batch.commit();
@@ -142,11 +163,13 @@ public class FirestoreHelper {
 
     public Task<Void> deleteSaleRecord(String saleId) {
         if (saleId == null) return Tasks.forException(new IllegalArgumentException("Sale ID cannot be null"));
-        return db.collection(COLLECTION_SALES).document(saleId).delete();
+        String userId = getCurrentUserId();
+        return db.collection(COLLECTION_USERS).document(userId).collection(COLLECTION_SALES).document(saleId).delete();
     }
 
     public Query getSalesHistory() {
-        return db.collection(COLLECTION_SALES)
+        String userId = getCurrentUserId();
+        return db.collection(COLLECTION_USERS).document(userId).collection(COLLECTION_SALES)
                 .orderBy("timestamp", Query.Direction.DESCENDING)
                 .limit(100);
     }

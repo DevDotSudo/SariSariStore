@@ -6,68 +6,61 @@
     android:layout_height="match_parent"
     android:background="@color/background">
 
-    <!-- Header with Gradient -->
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
-        android:layout_height="100dp"
+        android:layout_height="wrap_content"
         android:background="@android:color/transparent"
         app:elevation="0dp">
 
-        <com.google.android.material.appbar.CollapsingToolbarLayout
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@drawable/bg_gradient_primary"
-            app:layout_scrollFlags="scroll|exitUntilCollapsed">
+            android:layout_height="wrap_content"
+            android:background="@color/primary"
+            android:orientation="horizontal"
+            android:paddingStart="20dp"
+            android:paddingTop="16dp"
+            android:paddingEnd="20dp"
+            android:paddingBottom="20dp"
+            android:gravity="center_vertical">
 
             <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="horizontal"
-                android:paddingStart="20dp"
-                android:paddingTop="16dp"
-                android:paddingEnd="20dp"
-                android:paddingBottom="16dp"
-                android:gravity="center_vertical"
-                app:layout_collapseMode="parallax">
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
 
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-                
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Point of Sale"
-                        android:textColor="@color/surface"
-                        android:textSize="28sp"
-                        android:textStyle="bold" />
-                
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="4dp"
-                        android:text="Process new orders"
-                        android:textColor="@color/surface"
-                        android:textSize="13sp"
-                        android:alpha="0.85" />
-                </LinearLayout>
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btn_clear_cart"
-                    style="@style/Widget.Material3.Button.OutlinedButton"
+                <TextView
                     android:layout_width="wrap_content"
-                    android:layout_height="40dp"
-                    android:text="Clear Cart"
+                    android:layout_height="wrap_content"
+                    android:text="Point of Sale"
                     android:textColor="@color/surface"
-                    android:textSize="12sp"
-                    android:textStyle="bold"
-                    app:cornerRadius="10dp"
-                    app:strokeColor="@color/surface"
-                    app:strokeWidth="2dp" />
+                    android:textSize="24sp"
+                    android:letterSpacing="-0.02"
+                    android:textStyle="bold"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:alpha="0.9"
+                    android:text="Process new orders"
+                    android:textColor="@color/surface"
+                    android:textSize="13sp"/>
             </LinearLayout>
-        </com.google.android.material.appbar.CollapsingToolbarLayout>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_clear_cart"
+                style="@style/Widget.Material3.Button.OutlinedButton"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:text="Clear Cart"
+                android:textColor="@color/surface"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                app:cornerRadius="10dp"
+                app:strokeColor="@color/surface"
+                app:strokeWidth="2dp" />
+        </LinearLayout>
     </com.google.android.material.appbar.AppBarLayout>
 
     <!-- Content Container -->
@@ -75,7 +68,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <!-- Action Buttons -->
         <LinearLayout

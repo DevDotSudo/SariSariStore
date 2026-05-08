@@ -1,4 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Sari-Sari Store</string>
+
+    <!-- Category options for product dialog -->
+    <string-array name="category_options">
+        <item>Foods</item>
+        <item>Drinks</item>
+        <item>Snacks</item>
+        <item>Canned Goods</item>
+        <item>Noodles</item>
+        <item>Rice</item>
+        <item>Coffee</item>
+        <item>Bread</item>
+        <item>Toiletries</item>
+        <item>Household</item>
+        <item>Medicines</item>
+        <item>Load</item>
+        <item>School Supplies</item>
+        <item>Cigarettes</item>
+        <item>Frozen Foods</item>
+        <item>Others</item>
+    </string-array>
 </resources>

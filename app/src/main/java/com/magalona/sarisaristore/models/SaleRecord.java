@@ -12,6 +12,7 @@ public class SaleRecord {
     private String id;
     private List<Map<String, Object>> items;
     private double totalAmount;
+    private String userId;
 
     @ServerTimestamp
     private Date timestamp;
@@ -19,9 +20,10 @@ public class SaleRecord {
     // Required empty constructor for Firestore
     public SaleRecord() {}
 
-    public SaleRecord(List<Map<String, Object>> items, double totalAmount) {
+    public SaleRecord(List<Map<String, Object>> items, double totalAmount, String userId) {
         this.items = items;
         this.totalAmount = totalAmount;
+        this.userId = userId;
     }
 
     public String getId() { return id; }
@@ -32,6 +34,9 @@ public class SaleRecord {
 
     public double getTotalAmount() { return totalAmount; }
     public void setTotalAmount(double totalAmount) { this.totalAmount = totalAmount; }
+
+    public String getUserId() { return userId; }
+    public void setUserId(String userId) { this.userId = userId; }
 
     public Date getTimestamp() { return timestamp; }
     public void setTimestamp(Date timestamp) { this.timestamp = timestamp; }

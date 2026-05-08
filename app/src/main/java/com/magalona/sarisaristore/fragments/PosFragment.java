@@ -14,15 +14,18 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.magalona.sarisaristore.BarcodeScannerActivity;
 import com.magalona.sarisaristore.R;
 import com.magalona.sarisaristore.adapters.CartAdapter;
+import com.magalona.sarisaristore.adapters.ProductSelectionAdapter;
 import com.magalona.sarisaristore.database.FirestoreHelper;
 import com.magalona.sarisaristore.databinding.FragmentPosBinding;
 import com.magalona.sarisaristore.databinding.DialogSelectProductBinding;
+import com.magalona.sarisaristore.databinding.DialogSelectProductListBinding;
 import com.magalona.sarisaristore.models.CartItem;
 import com.magalona.sarisaristore.models.Product;
 import com.magalona.sarisaristore.utils.DialogHelper;
@@ -123,19 +126,44 @@ public class PosFragment extends Fragment {
                          return;
                      }
 
-                     String[] names = new String[products.size()];
-                     for (int i = 0; i < products.size(); i++) {
-                         Product prod = products.get(i);
-                         String prodName = prod.getName() != null ? prod.getName() : "Unknown";
-                         names[i] = String.format(Locale.getDefault(), "%s (₱%.2f) - Stock: %d",
-                                 prodName, prod.getUnitPrice(), prod.getStockQuantity());
+                     // Create custom product selection dialog
+                     DialogSelectProductListBinding dlg = DialogSelectProductListBinding.inflate(LayoutInflater.from(requireContext()));
+                     
+                     // Set up RecyclerView
+                     ProductSelectionAdapter adapter = new ProductSelectionAdapter(products);
+                     final androidx.appcompat.app.AlertDialog[] dialogRef = new androidx.appcompat.app.AlertDialog[1];
+                     adapter.setOnProductClickListener(product -> {
+                         promptQuantity(product);
+                         if (dialogRef[0] != null) {
+                             dialogRef[0].dismiss();
+                         }
+                     });
+                     dlg.rvProducts.setLayoutManager(new LinearLayoutManager(requireContext()));
+                     dlg.rvProducts.setAdapter(adapter);
+                     
+                     // Handle empty state
+                     if (products.isEmpty()) {
+                         dlg.tvEmpty.setVisibility(View.VISIBLE);
+                         dlg.rvProducts.setVisibility(View.GONE);
+                     } else {
+                         dlg.tvEmpty.setVisibility(View.GONE);
+                         dlg.rvProducts.setVisibility(View.VISIBLE);
                      }
-
-                     new MaterialAlertDialogBuilder(requireContext(), R.style.Theme_SariSariStore_Dialog)
-                             .setTitle("Select Product")
-                             .setItems(names, (d, which) -> promptQuantity(products.get(which)))
-                             .setNegativeButton("Cancel", null)
-                             .show();
+                     
+                     androidx.appcompat.app.AlertDialog dialog = new MaterialAlertDialogBuilder(requireContext(), R.style.Theme_SariSariStore_Dialog)
+                             .setView(dlg.getRoot())
+                             .setCancelable(false)
+                             .create();
+                     dialogRef[0] = dialog;
+                     
+                     dialog.setCanceledOnTouchOutside(false);
+                     
+                     // Close button in header
+                     if (dlg.btnDialogClose != null) {
+                         dlg.btnDialogClose.setOnClickListener(v -> dialog.dismiss());
+                     }
+                     
+                     dialog.show();
                  })
                  .addOnFailureListener(e -> {
                      if (binding == null || getContext() == null) return;
@@ -157,8 +185,8 @@ public class PosFragment extends Fragment {
          dialog.setCanceledOnTouchOutside(false);
 
          // Close button in header
-         if (dlg.btnClose != null) {
-             dlg.btnClose.setOnClickListener(v -> dialog.dismiss());
+         if (dlg.btnDialogClose != null) {
+             dlg.btnDialogClose.setOnClickListener(v -> dialog.dismiss());
          }
 
          dlg.btnConfirm.setOnClickListener(v -> {
@@ -252,7 +280,11 @@ public class PosFragment extends Fragment {
         
         List<CartItem> snapshot = new ArrayList<>(cartItems);
         
-        db.checkout(snapshot, total)
+        // Get current user ID
+        String userId = com.google.firebase.auth.FirebaseAuth.getInstance().getCurrentUser() != null ?
+                com.google.firebase.auth.FirebaseAuth.getInstance().getCurrentUser().getUid() : null;
+        
+        db.checkout(snapshot, total, userId)
                 .addOnSuccessListener(v -> {
                     if (binding == null || getContext() == null) return;
                     DialogHelper.showSuccess(requireContext(), "Sale Completed", "Transaction recorded successfully.", null);

@@ -15,6 +15,7 @@ import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -92,7 +93,24 @@ public class StockFragment extends Fragment {
                                 Product p = doc.toObject(Product.class);
                                 if (p != null) {
                                     dialogBinding.etProductName.setText(p.getName());
-                                    dialogBinding.etCategory.setText(p.getCategory());
+                                    // Set category in dropdown
+                                    String category = p.getCategory();
+                                    ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(requireContext(),
+                                            R.array.category_options, R.layout.dropdown_item);
+                                    adapter.setDropDownViewResource(R.layout.dropdown_item);
+                                    dialogBinding.actvCategory.setAdapter(adapter);
+                                    
+                                    // Set dropdown background to white
+                                    dialogBinding.actvCategory.setDropDownBackgroundResource(R.color.surface);
+                                    
+                                    int position = adapter.getPosition(category);
+                                    if (position >= 0) {
+                                        dialogBinding.actvCategory.setText(category, false);
+                                    } else {
+                                        // Category not in list, set as custom
+                                        dialogBinding.tilCustomCategory.setVisibility(View.VISIBLE);
+                                        dialogBinding.etCustomCategory.setText(category);
+                                    }
                                     dialogBinding.etUnitPrice.setText(String.valueOf(p.getUnitPrice()));
                                     DialogHelper.showSuccess(requireContext(), "Product Found", 
                                         "Existing product loaded from barcode", null);
@@ -194,6 +212,15 @@ public class StockFragment extends Fragment {
         pendingImageUri = null;
         dialogBinding = DialogAddProductBinding.inflate(getLayoutInflater());
         dialogBinding.tvDialogTitle.setText("New Product Details");
+        
+        // Initialize category dropdown
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(requireContext(),
+                R.array.category_options, R.layout.dropdown_item);
+        adapter.setDropDownViewResource(R.layout.dropdown_item);
+        dialogBinding.actvCategory.setAdapter(adapter);
+        
+        // Set dropdown background to white
+        dialogBinding.actvCategory.setDropDownBackgroundResource(R.color.surface);
 
         AlertDialog dialog = new MaterialAlertDialogBuilder(requireContext(), R.style.Theme_SariSariStore_Dialog)
                 .setView(dialogBinding.getRoot())
@@ -232,7 +259,24 @@ public class StockFragment extends Fragment {
         dialogBinding.tvDialogTitle.setText("Edit Product");
 
         dialogBinding.etProductName.setText(product.getName() != null ? product.getName() : "");
-        dialogBinding.etCategory.setText(product.getCategory() != null ? product.getCategory() : "");
+        // Set category in dropdown
+        String category = product.getCategory() != null ? product.getCategory() : "";
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(requireContext(),
+                R.array.category_options, R.layout.dropdown_item);
+        adapter.setDropDownViewResource(R.layout.dropdown_item);
+        dialogBinding.actvCategory.setAdapter(adapter);
+        
+        // Set dropdown background to white
+        dialogBinding.actvCategory.setDropDownBackgroundResource(R.color.surface);
+        
+        int position = adapter.getPosition(category);
+        if (position >= 0) {
+            dialogBinding.actvCategory.setText(category, false);
+        } else {
+            // Category not in list, set as custom
+            dialogBinding.tilCustomCategory.setVisibility(View.VISIBLE);
+            dialogBinding.etCustomCategory.setText(category);
+        }
         dialogBinding.etUnitPrice.setText(product.getUnitPrice() > 0 ? String.valueOf(product.getUnitPrice()) : "");
         dialogBinding.etInitialStock.setText(product.getStockQuantity() > 0 ? String.valueOf(product.getStockQuantity()) : "0");
         dialogBinding.etBarcode.setText(pendingBarcode);
@@ -284,7 +328,7 @@ public class StockFragment extends Fragment {
     private boolean saveNewProduct() {
         if (dialogBinding == null) return false;
         String name     = dialogBinding.etProductName.getText().toString().trim();
-        String category = dialogBinding.etCategory.getText().toString().trim();
+        String category = getSelectedCategory();
         String priceStr = dialogBinding.etUnitPrice.getText().toString().trim();
         String qtyStr   = dialogBinding.etInitialStock.getText().toString().trim();
 
@@ -310,7 +354,11 @@ public class StockFragment extends Fragment {
                 android.util.Log.d("StockFragment", "Saving Base64 image (length: " + base64Image.length() + "): " + preview);
             }
 
-            Product product = new Product(name, category, price, qty, pendingBarcode, base64Image);
+            // Get current user ID
+            String userId = com.google.firebase.auth.FirebaseAuth.getInstance().getCurrentUser() != null ?
+                    com.google.firebase.auth.FirebaseAuth.getInstance().getCurrentUser().getUid() : null;
+            
+            Product product = new Product(name, category, price, qty, pendingBarcode, base64Image, userId);
             db.addProduct(product)
                     .addOnSuccessListener(ref -> {
                         if (getContext() != null && isAdded()) {
@@ -333,7 +381,7 @@ public class StockFragment extends Fragment {
     private boolean updateProduct(String productId, String existingBase64Image) {
         if (dialogBinding == null) return false;
         String name     = dialogBinding.etProductName.getText().toString().trim();
-        String category = dialogBinding.etCategory.getText().toString().trim();
+        String category = getSelectedCategory();
         String priceStr = dialogBinding.etUnitPrice.getText().toString().trim();
         String qtyStr   = dialogBinding.etInitialStock.getText().toString().trim();
 
@@ -361,7 +409,11 @@ public class StockFragment extends Fragment {
                 base64Image = existingBase64Image != null ? existingBase64Image : "";
             }
 
-            Product product = new Product(name, category, price, qty, pendingBarcode, base64Image);
+            // Get current user ID
+            String userId = com.google.firebase.auth.FirebaseAuth.getInstance().getCurrentUser() != null ?
+                    com.google.firebase.auth.FirebaseAuth.getInstance().getCurrentUser().getUid() : null;
+            
+            Product product = new Product(name, category, price, qty, pendingBarcode, base64Image, userId);
             db.updateProduct(productId, product)
                     .addOnSuccessListener(v -> {
                         if (getContext() != null && isAdded()) {
@@ -453,6 +505,14 @@ public class StockFragment extends Fragment {
 
          dialog.show();
      }
+
+    private String getSelectedCategory() {
+        String selected = dialogBinding.actvCategory.getText().toString().trim();
+        if (selected.equals("Other")) {
+            return dialogBinding.etCustomCategory.getText().toString().trim();
+        }
+        return selected;
+    }
 
     private void launchCamera() {
         try {

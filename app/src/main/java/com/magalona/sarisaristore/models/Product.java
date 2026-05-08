@@ -14,6 +14,7 @@ public class Product {
     private int stockQuantity;
     private String barcode;
     private String imageUri;
+    private String userId;
     private boolean lowStock; // ← added for Firestore mapping
 
     @ServerTimestamp
@@ -22,13 +23,14 @@ public class Product {
     // Required empty constructor for Firestore
     public Product() {}
 
-    public Product(String name, String category, double unitPrice, int stockQuantity, String barcode, String imageUri) {
+    public Product(String name, String category, double unitPrice, int stockQuantity, String barcode, String imageUri, String userId) {
         this.name = name;
         this.category = category;
         this.unitPrice = unitPrice;
         this.stockQuantity = stockQuantity;
         this.barcode = barcode;
         this.imageUri = imageUri;
+        this.userId = userId;
     }
 
     public String getId() { return id; }
@@ -51,6 +53,9 @@ public class Product {
 
     public String getImageUri() { return imageUri; }
     public void setImageUri(String imageUri) { this.imageUri = imageUri; }
+
+    public String getUserId() { return userId; }
+    public void setUserId(String userId) { this.userId = userId; }
 
     public Date getCreatedAt() { return createdAt; }
     public void setCreatedAt(Date createdAt) { this.createdAt = createdAt; }

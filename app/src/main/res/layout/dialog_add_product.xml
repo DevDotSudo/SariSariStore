@@ -74,7 +74,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:scaleType="centerCrop"
-                        android:src="@drawable/ic_product_placeholder" />
+                        android:src="@drawable/ic_image_placeholder" />
                 </com.google.android.material.card.MaterialCardView>
 
                 <!-- Image Buttons -->
@@ -128,9 +128,9 @@
                         android:textSize="@dimen/text_size_body_large" />
                 </com.google.android.material.textfield.TextInputLayout>
 
-                <!-- Category Input -->
+                <!-- Category Selection -->
                 <com.google.android.material.textfield.TextInputLayout
-                    style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                    style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="@dimen/spacing_lg"
@@ -138,10 +138,40 @@
                     app:boxCornerRadiusBottomEnd="@dimen/corner_md"
                     app:boxCornerRadiusBottomStart="@dimen/corner_md"
                     app:boxCornerRadiusTopEnd="@dimen/corner_md"
-                    app:boxCornerRadiusTopStart="@dimen/corner_md">
+                    app:boxCornerRadiusTopStart="@dimen/corner_md"
+                    app:endIconMode="dropdown_menu"
+                    app:boxStrokeColor="@color/primary"
+                    app:hintTextColor="@color/primary"
+                    app:boxBackgroundColor="@color/surface">
+
+                    <AutoCompleteTextView
+                        android:id="@+id/actv_category"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="none"
+                        android:dropDownHeight="200dp"
+                        android:textColor="@color/text_primary"
+                        android:textSize="@dimen/text_size_body_large" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <!-- Custom Category Field (shown when 'Other' is selected) -->
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                    android:id="@+id/til_custom_category"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/spacing_lg"
+                    android:hint="Custom Category"
+                    android:visibility="gone"
+                    app:boxCornerRadiusBottomEnd="@dimen/corner_md"
+                    app:boxCornerRadiusBottomStart="@dimen/corner_md"
+                    app:boxCornerRadiusTopEnd="@dimen/corner_md"
+                    app:boxCornerRadiusTopStart="@dimen/corner_md"
+                    app:boxStrokeColor="@color/primary"
+                    app:hintTextColor="@color/primary">
 
                     <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/et_category"
+                        android:id="@+id/et_custom_category"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:inputType="textCapWords"

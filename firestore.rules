@@ -1,0 +1,41 @@
+// Firestore Security Rules
+// Only authenticated users can read/write their own data
+
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Users collection - each user can only access their own document
+    match /users/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+    
+    // Products collection - scoped by user
+    match /users/{userId}/products/{productId} {
+      allow read: if request.auth != null && request.auth.uid == userId;
+      allow create: if request.auth != null && request.auth.uid == userId;
+      allow update: if request.auth != null && request.auth.uid == userId && request.resource.data.userId == userId;
+      allow delete: if request.auth != null && request.auth.uid == userId;
+    }
+    
+    // Sales collection - scoped by user
+    match /users/{userId}/sales_history/{saleId} {
+      allow read: if request.auth != null && request.auth.uid == userId;
+      allow create: if request.auth != null && request.auth.uid == userId;
+      allow update: if request.auth != null && request.auth.uid == userId && request.resource.data.userId == userId;
+      allow delete: if request.auth != null && request.auth.uid == userId;
+    }
+    
+    // Global read-only access for low stock products (for dashboard)
+    // But only if user is authenticated
+    match /users/{userId}/products/{productId} {
+      allow read: if request.auth != null && request.auth.uid == userId;
+    }
+    
+    // Allow reading low stock products for authenticated users
+    match /users/{userId}/products/{productId} {
+      allow read: if request.auth != null && request.auth.uid == userId && resource.data.stockQuantity < 5;
+    }
+  }
+}
